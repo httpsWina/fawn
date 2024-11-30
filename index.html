@@ -22,19 +22,25 @@
         opacity: 1;
       }
       #times {
-height: 60px;
-width: 200px;
-}
+        height: 60px;
+        width: 200px;
+        opacity: 0;
+        transition: opacity 0.3s ease-in-out;
+      }
+      .hover-container:hover #times {
+        opacity: 1;
+      }
     </style>
     <script
       data-goatcounter="https://fawn.goatcounter.com/count"
       async
       src="//gc.zgo.at/count.js"
     ></script>
-    
+   
   </head>
   <body>
     <div
+      class="hover-container"
       style="
         display: flex;
         position: absolute;
@@ -74,7 +80,7 @@ width: 200px;
         <div id="times" style="font-size: 11px;"></div>
         <script>
           function updateTime() {
-            const times= document.getElementById("times");
+            const times = document.getElementById("times");
             times.textContent = `
             It's ${new Date().toLocaleString("en-US", {
               timeZone: "America/Buenos_Aires",
