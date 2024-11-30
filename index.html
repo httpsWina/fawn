@@ -1,59 +1,88 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>fawn dot zip</title>
     <style>
-        a {
-            color: black;
-            text-decoration: none;
-        }
-        .image-container {
-            width: 200px;
-            height: 200px;
-        }
-        .hidden {
-            opacity: 0;
-            transition: opacity 0.3s ease-in-out;
-        }
-        .visible {
-            opacity: 1;
-        }
+      a {
+        color: black;
+        text-decoration: underline;
+      }
+      .image-container {
+        width: 200px;
+        height: 200px;
+      }
+      .hidden {
+        opacity: 0;
+        transition: opacity 0.3s ease-in-out;
+      }
+      .visible {
+        opacity: 1;
+      }
+      #times {
+height: 60px; /* Fixed height to prevent layout shifts */
+width: 200px; /* Fixed width to prevent layout shifts */
+}
     </style>
-    <script data-goatcounter="https://fawn.goatcounter.com/count"
-    async src="//gc.zgo.at/count.js"></script>
-</head>
-<body>
-    <div style="
-    display: flex; 
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    -webkit-transform: translate(-50%, -50%);
-    transform: translate(-50%, -50%);">
-        <div class="image-container">
-            <img 
-                src="https://utfs.io/f/eqSy6nYCI7Hvn4wLZYRCWlsodhUEtL8Ygx7QFfIRBHGrywpA" 
-                alt="Ms. Mom and her child looking at the camera" 
-                style="width: 200px"
-                class="hidden"
-                onload="this.classList.add('visible')"
-            >
-        </div>
-        <div style="font-family: Arial, Helvetica, sans-serif; padding-left: 10px; padding-top: 10px;">
-            <a href="https://x.com/httpsWina">twitter</a>
-            <br>
-            <span>discord: @tacticalrpg</span>
-            <br>
-            <a href="https://www.backloggd.com/u/wina/">backloggd</a>
-            <br>
-            <a href="https://steamcommunity.com/id/httpswina/">steam</a>
-            <br>
-            <a href="https://www.last.fm/user/Wina-">last.fm</a>
-            <br>
-            <span>click!</span>
-        </div>
+    <script
+      data-goatcounter="https://fawn.goatcounter.com/count"
+      async
+      src="//gc.zgo.at/count.js"
+    ></script>
+  </head>
+  <body>
+    <div
+      style="
+        display: flex;
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        -webkit-transform: translate(-50%, -50%);
+        transform: translate(-50%, -50%);
+      "
+    >
+      <div class="image-container">
+        <img
+          src="https://utfs.io/f/eqSy6nYCI7Hvn4wLZYRCWlsodhUEtL8Ygx7QFfIRBHGrywpA"
+          alt="Ms. Mom and her child looking at the camera"
+          style="width: 200px"
+          class="hidden"
+          onload="this.classList.add('visible')"
+        />
+      </div>
+      <div
+        style="
+          font-family: Arial, Helvetica, sans-serif;
+          padding-left: 10px;
+          padding-top: 10px;
+        "
+      >
+        <a href="https://x.com/httpsWina">twitter</a> /
+        <a href="https://bsky.app/profile/fawn.zip">bluesky</a>
+        <br />
+        <a href="https://www.backloggd.com/u/wina/">backloggd</a>
+        <br />
+        <a href="https://steamcommunity.com/id/httpswina/">steam</a>
+        <br />
+        <a href="https://www.last.fm/user/Wina-">last.fm</a>
+        <br />
+        <span>discord: @tacticalrpg</span>
+        <br />
+        <div id="times" style="font-size: 11px;"></div>
+        <script>
+          function updateTime() {
+            const times= document.getElementById("times");
+            times.textContent = `
+            It's ${new Date().toLocaleString("en-US", {
+              timeZone: "America/Buenos_Aires",
+              timeStyle: "medium",
+            })} for me`;
+          }
+          updateTime();
+          setInterval(updateTime, 1000);
+        </script>
+      </div>
     </div>
-</body>
+  </body>
 </html>
