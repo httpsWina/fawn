@@ -1,0 +1,16 @@
+{
+  "name": "fawn-bun",
+  "module": "index.ts",
+  "type": "module",
+  "devDependencies": {
+    "@types/bun": "^1.2.12"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "croner": "^9.0.0",
+    "hono": "^4.7.8",
+    "hono-rate-limiter": "^0.4.2"
+  }
+}

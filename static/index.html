@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/gif" href="https://utfs.io/f/eqSy6nYCI7Hvn4AAUArRCWlsodhUEtL8Ygx7QFfIRBHGrywp">
+    <title>fawn</title>
+    <style>
+      body {
+        margin: 0;
+        min-height: 100vh; 
+        display: flex; 
+        justify-content: center; 
+        align-items: center; 
+      }
+      .main-flex {
+        display: flex;
+        flex-direction: row;
+        gap: 16px;
+      }
+      @media (max-width: 600px) {
+        .main-flex {
+          flex-direction: column-reverse;
+          align-items: stretch;
+          gap: 0;
+        }
+        .text-container,
+        .image-container {
+          width: 100% !important;
+          min-width: 0;
+          box-sizing: border-box;
+        }
+        .image-container {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          margin: 0 0 16px 0;
+        }
+        .image-container img {
+          width: 100%;
+          max-width: 200px;
+          height: auto;
+        }
+      }
+      .title-bg{
+        background-color: lightgray;
+        padding-right: 5px;
+      }
+      a {
+        color: black;
+        text-decoration: underline;
+      }
+      .grey-text {
+        color: #666;
+      }
+      .text-container {
+        font-family: Arial, Helvetica, sans-serif;
+          padding-left: 10px;
+          padding-top: 10px;
+          width: 350px;}
+      .image-container {
+        width: 200px;
+        height: 200px;
+      }
+      .hidden {
+        opacity: 0;
+        transition: opacity 0.5s ease-in-out;
+      }
+      .visible {
+        opacity: 1;
+        transition: opacity 0.5s ease-in-out;
+
+      }
+      #times {
+        height: 60px;
+        width: 200px;
+      }
+       #times.hidden {
+        opacity: 0;
+        transition: opacity 0.5s ease-in-out;
+       }
+       #times.visible {
+        opacity: 1;
+        transition: opacity 0.5s ease-in-out;
+       }
+       .small-text {
+         font-size: 0.8em;
+         margin-left: 5px;
+         color: darkslategray; 
+       }
+       .ticker-change.positive {
+         color: green;
+       }
+       .ticker-change.negative {
+         color: red;
+       }
+      .image-container img {
+        max-width: 200px;
+        width: 100%;
+        height: auto;
+      }
+    </style>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script
+      data-goatcounter="https://fawn.goatcounter.com/count"
+      async
+      src="//gc.zgo.at/count.js"
+    ></script>
+    <script>
+      document.addEventListener('alpine:init', () => {
+        Alpine.data('manifoldTicker', () => ({
+          apiurl: '/api/manifold-nw',
+          net: null,
+          change: null,
+          loading: true,
+          init() { this.fetchData(); }, 
+          fetchData() {
+            this.loading = true;
+            fetch(this.apiurl)
+              .then(r => r.ok ? r.json() : Promise.reject('Network not ok'))
+              .then(data => { this.net = parseFloat(data.net); this.change = parseFloat(data.change); this.loading = false; })
+              .catch(e => { console.error('Fetch error:', e); this.net = null; this.change = null; this.loading = false; });
+          },
+          get changeClass() { return this.change === null ? '' : (this.change >= 0 ? 'positive' : 'negative'); }
+        }));
+        Alpine.data('lastfmRecentTracks', () => ({
+          apiurl: '/api/lastfm-last-played',
+          tracks: [],
+          loading: true,
+          init() {
+            this.fetchData();
+            setInterval(() => { this.fetchData(); }, 30000);
+          },
+          fetchData() {
+            this.loading = true;
+            fetch(this.apiurl)
+              .then(r => r.ok ? r.json() : Promise.reject('Network not ok'))
+              .then(data => { this.tracks = data; this.loading = false; })
+              .catch(e => { console.error('Fetch error:', e); this.tracks = []; this.loading = false; });
+          },
+          timeAgo(ts) {
+            if (!ts) return '';
+            const now = Math.floor(Date.now() / 1000);
+            const diff = now - ts;
+            if (diff < 60) return `${diff}s ago`;
+            if (diff < 3600) return `${Math.floor(diff / 60)}m ago`;
+            if (diff < 86400) return `${Math.floor(diff / 3600)}h ago`;
+            return `${Math.floor(diff / 86400)}d ago`;
+          },
+          truncate(str, max = 22) {
+            if (!str) return '';
+            return str.length > max ? str.slice(0, max - 1) + '…' : str;
+          }
+        }));
+      });
+    </script>
+
+  </head>
+  <body>
+    <div
+      class="main-flex hover-container"
+      x-data="{ hovering: false, time: '' }"
+      x-init="
+        setInterval(() => {
+          time = `It's ${new Date().toLocaleString('en-US', { timeZone: 'America/Buenos_Aires', timeStyle: 'medium' })} for me`;
+        }, 1000);
+        time = `It's ${new Date().toLocaleString('en-US', { timeZone: 'America/Buenos_Aires', timeStyle: 'medium' })} for me`;
+      "
+      @mouseenter="hovering = true"
+      @mouseleave="hovering = false"
+    >
+    <div class="text-container" style="text-align: right;">
+      <br>
+      <div >
+      <a href="https://manifold.markets/256">manifold</a></div>
+    <span x-data="manifoldTicker()">
+      <span class="small-text">($<span x-text="net !== null ? net.toFixed(2) : '...'"></span>,
+      <span :class="['ticker-change', changeClass]" x-text="change !== null ? (change >= 0 ? '+' : '') + change.toFixed(2) + '%' : '...'"></span>)
+      </span>
+    </span>
+    <br/>
+    <a href="https://www.last.fm/user/Wina-">last.fm</a>
+    <div x-data="lastfmRecentTracks()" x-init="init()">
+      <template x-if="tracks.length > 0">
+        <div>
+          <div style="font-size: 0.8em;">
+            <a :href="tracks[0].url" style="text-decoration: none; color: inherit;" target="_blank">
+              <span x-text="truncate(tracks[0].name)"></span>
+            </a>
+            <span class="grey-text">-</span>
+            <span x-text="tracks[0].artist"></span>
+            <template x-if="tracks[0].timestamp == undefined">
+              <span style="color: green;">NOW</span>
+            </template>
+            <template x-if="tracks[0].timestamp !== undefined">
+              <span class="grey-text" x-text="timeAgo(tracks[0].timestamp)"></span>
+            </template>
+          </div>
+          <div class="grey-text" style="font-size: 0.70em;">
+            <template x-for="track in tracks.slice(1,5)" :key="track.timestamp || track.name + track.artist">
+              <div>
+                <a :href="track.url" style="text-decoration: none; color: inherit;" target="_blank">
+                  <span x-text="truncate(track.name)"></span>
+                </a>
+                - <span x-text="track.artist"></span>
+                <span class="small-text" x-text="timeAgo(track.timestamp)"></span>
+              </div>
+            </template>
+          </div>
+        </div>
+      </template>
+    </div>
+    <br/></div>
+      <div class="image-container">
+        <img
+          src="https://utfs.io/f/eqSy6nYCI7Hvn4wLZYRCWlsodhUEtL8Ygx7QFfIRBHGrywpA"
+          alt=""
+          class="hidden"
+          x-data="{ loaded: false }"
+          x-init="$el.onload = () => loaded = true"
+          :class="{ 'visible': loaded }"
+        />
+      </div>
+      <div class="text-container" >
+        <span>19 - 🇦🇷</span>
+        <br>
+        <a href="https://x.com/httpsWina">twitter</a> /
+        <a href="https://bsky.app/profile/fawn.zip">bluesky</a>
+        <br />
+        <a href="https://www.backloggd.com/u/wina/">backloggd</a>
+        <br/>
+        <a href="https://steamcommunity.com/id/httpswina/">steam</a>
+        <br />
+        <a href="https://github.com/httpsWina">github</a>
+        <br />
+        <span>discord: @tacticalrpg</span>
+        <br />
+        <div id="times" style="font-size: 0.7rem;" class="hidden" x-text="time" :class="{ 'visible': hovering, 'hidden': !hovering }"></div>
+      </div>
+    </div>
+  </body>
+</html>
