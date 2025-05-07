@@ -1,9 +1,11 @@
 import { Hono } from "hono";
 import { serveStatic } from "hono/bun"; 
 import { rateLimiter } from "hono-rate-limiter";
-// import { redis } from "bun";
+import Redis from "ioredis";
 import { getNet, getListeningTo } from "./server/store.ts";
 import { Cron } from "croner";
+
+const redis = new Redis(process.env.REDIS_URL || "redis://localhost:6379");
 
 const limiter = rateLimiter({
   windowMs:  60 * 1000, 
@@ -21,8 +23,8 @@ app.get("/api/manifold-nw",  async(c) => {
   let net = "";
   let change = "";
   try {
-    // net = await redis.get("networth") || "";
-    // change = await redis.get("24hchange") || "";
+    net = await redis.get("networth") || "";
+    change = await redis.get("24hchange") || "";
   } catch(e){
     console.log(e);
   }
@@ -35,7 +37,7 @@ app.get("/api/manifold-nw",  async(c) => {
 app.get("/api/lastfm-last-played", async(c) => {
   let data = "";
   try {
-    //data = await redis.get("lastfm-last-played") || "";
+    data = await redis.get("lastfm-last-played") || "";
   } catch(e){
     console.log(e);
   }
@@ -52,8 +54,8 @@ app.onError((err, c) => {
 const Updater = async () => {
   console.log(`Updating redis at ${new Date().toLocaleTimeString()}`);
   try {
-    // getNet();
-    // getListeningTo();
+    getNet(redis);
+    getListeningTo(redis);
     console.log("Updated");
   } catch (error) {
     console.log(error);
