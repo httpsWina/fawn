@@ -56,7 +56,7 @@ const Updater = async () => {
     getListeningTo();
     console.log("Updated");
   } catch (error) {
-    console.error("Error during 5-minute task:", error);
+    console.log(error);
   }
 };
 const updateRate = '*/1 * * * *';
