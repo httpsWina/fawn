@@ -1,4 +1,4 @@
-import { redis } from "bun";
+// import { redis } from "bun";
 
 export async function getNet(){
     const data = await fetch("https://api.manifold.markets/v0/get-user-portfolio?userId=z4AJOt8LtNeAXXm7ZhAY1C7A9Ib2");
@@ -8,8 +8,8 @@ export async function getNet(){
     const percentChange = (((networth - starting) / starting) * 100).toFixed(2) 
     console.log(percentChange);
     console.log(networth);
-    await redis.set("networth", networth);
-    await redis.set("24hchange", percentChange);
+    // await redis.set("networth", networth);
+    // await redis.set("24hchange", percentChange);
 }
 
 export async function getListeningTo()  {
@@ -27,6 +27,6 @@ export async function getListeningTo()  {
         url: track.url 
       };
     });
-    await redis.set("lastfm-last-played", JSON.stringify(trackdata));
+    // await redis.set("lastfm-last-played", JSON.stringify(trackdata));
 }
 
