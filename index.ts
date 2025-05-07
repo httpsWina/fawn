@@ -18,8 +18,14 @@ app.use("*", limiter);
 app.get("/", serveStatic({ path: "./static/index.html" }));
 
 app.get("/api/manifold-nw",  async(c) => {
-  const net = await redis.get("networth");
-  const change = await redis.get("24hchange");
+  let net = "";
+  let change = "";
+  try {
+    net = await redis.get("networth") || "";
+    change = await redis.get("24hchange") || "";
+  } catch(e){
+    console.log(e);
+  }
   return c.json({ 
     net: net,
     change: change,
@@ -27,7 +33,12 @@ app.get("/api/manifold-nw",  async(c) => {
 });
 
 app.get("/api/lastfm-last-played", async(c) => {
-  const data = await redis.get("lastfm-last-played");
+  let data = "";
+  try {
+    data = await redis.get("lastfm-last-played") || "";
+  } catch(e){
+    console.log(e);
+  }
   return c.json(JSON.parse(data || "[]"));
 });
 
