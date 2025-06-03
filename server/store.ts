@@ -3,7 +3,7 @@ import Redis from "ioredis";
 export async function getNet(redis: Redis){
     const data = await fetch("https://api.manifold.markets/v0/get-user-portfolio?userId=z4AJOt8LtNeAXXm7ZhAY1C7A9Ib2");
     const json = await data.json();
-    const networth = (json.investmentValue + json.balance).toFixed(2); 
+    const networth = (json.investmentValue + json.balance); 
     const starting = json.investmentValue - json.dailyProfit;
     const percentChange = (((networth - starting) / starting) * 100).toFixed(2) 
     console.log(percentChange);
